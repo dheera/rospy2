@@ -21,6 +21,14 @@ to
 import rospy2 as rospy
 ```
 
+You can even make nodes that work in both ROS1 and ROS2:
+```
+try:
+    import rospy
+except ImportError:
+    import rospy2 as rospy
+```
+
 You should then be able to just run your node and it should work on ROS2. A test node is provided:
 
 ```
