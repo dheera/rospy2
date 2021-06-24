@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import hashlib
+import os
 import rclpy
 import sys
 import time
@@ -19,6 +20,7 @@ _node = None
 _logger = None
 _clock = None
 _thread_spin = None
+_wait_for_message_release = False
 
 def get_param(param_name, default_value = None):
     global _node, _logger
@@ -92,20 +94,32 @@ def spin():
     global _thread_spin
     _thread_spin.join()
 
-def wait_for_message():
-    pass
+def wait_for_message(topic_name, topic_type):
+    wait_for_message._release = False
+    _sub = _node.create_subscriber(topic_name, topic_type, _release_wait_for_message)
+    while not _wait_for_message_release:
+        time.sleep(0.1)
+    _node.destroy_subscriber(_sub)
 
-def wait_for_service():
-    pass
+def _release_wait_for_message(self, msg):
+    _wait_for_message_release = True
+
+def wait_for_service(service_name):
+    abs_service_name = os.path.join(_node.get_namespace(), service_name)
+    while True:
+        for service in _node.get_service_names_and_types():
+            if service[0] == abs_service_name:
+                break
+        time.sleep(0.5)
 
 class Publisher(object):
-    def __init__(self, topic_type, topic_name):
+    def __init__(self, topic_name, topic_type, queue_size = 1):
         self.reg_type = "pub"
         self.data_class = topic_type
         self.name = topic_name
         self.resolved_name = topic_name
         self.type = _ros2_type_to_type_name(topic_type)
-        self._pub = _node.create_publisher(topic_type, topic_name)
+        self._pub = _node.create_publisher(topic_type, topic_name, 10)
         self.get_num_connections = self._pub.get_subscription_count
 
     def __del__(self):
@@ -163,15 +177,12 @@ class ServiceProxy(object):
         return resp
 
 class Duration(object):
-    def __init__(self, secs, nsecs = 0):
-        self.secs = secs
-        self.nsecs = nsecs
-
-class Duration(object):
     def __new__(cls, secs, nsecs = 0):
         d = rclpy.duration.Duration(nanoseconds = secs * 1000000000 + nsecs)
         d.to_nsec = types.MethodType(lambda self: self.nanoseconds, d)
         d.to_sec = types.MethodType(lambda self: self.nanoseconds / 1e9, d)
+        d.secs = secs
+        d.nsecs = nsecs
         return d
 
     @classmethod
@@ -195,6 +206,8 @@ class Time(object):
         t = rclpy.time.Time(nanoseconds = secs * 1000000000 + nsecs)
         t.to_nsec = types.MethodType(lambda self: self.nanoseconds, t)
         t.to_sec = types.MethodType(lambda self: self.nanoseconds / 1e9, t)
+        t.secs = secs
+        t.nsecs = nsecs
         return t
 
     @classmethod
