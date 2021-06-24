@@ -25,5 +25,5 @@ You should then be able to just run your node and it should work on ROS2. A test
 
 ```
 source /opt/ros/foxy/setup.bash
-./test.py
+./test_node.py
 ```
