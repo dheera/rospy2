@@ -6,16 +6,26 @@ from constants import *
 
 rclpy.init(args = sys.argv)
 
+# Variables starting with an underscore are stored ROS2 objects and are not
+# intended to be used directly.
+# All normally-named functions/classes/methods are designed to function exactly
+# as per their ROS1 namesake.
+
 _node = None
 _logger = None
 
-def get_param():
-    pass
-
-def init__node(_node_name, anonymous=False, log_level=rospy.INFO, disable_signals=False):
+def get_param(param_name, default_value = None):
     global _node, _logger
-    _node = rclpy.create__node(_node_name)
-    _logger = _node.get__logger()
+    return _node.get_parameter_or(param_name, default_value)._value
+
+def init_node(node_name, anonymous=False, log_level=rospy.INFO, disable_signals=False):
+    global _node, _logger
+    _node = rclpy.create_node(
+        node_name,
+        allow_undeclared_parameters = True,
+        automatically_declare_parameters_from_overrides = True,
+    )
+    _logger = _node.get_logger()
 
 def is_shutdown():
     pass
@@ -43,8 +53,24 @@ def logfatal(log_text):
 def on_shutdown(h):
     pass
 
-def set_param():
-    pass
+def set_param(parameter_name, parameter_value):
+    if type(parameter_value) is str:
+        parameter_type = rclpy.Parameter.Type.STRING
+    elif type(parameter_value) is float:
+        parameter_type = rclpy.Parameter.Type.DOUBLE
+    elif type(parameter_value) is int:
+        parameter_type = rclpy.Parameter.Type.INT
+    elif type(parameter_value) is bool:
+        parameter_type = rclpy.Parameter.Type.BOOL
+    else:
+        raise Exception("Invalid parameter value type: %s" % str(type(parameter_value)))
+
+    param = rclpy.parameter.Parameter(
+        "parameter_name",
+        parameter_type,
+        parameter_value,
+    )
+    _node.set_parameters([param])
 
 def signal_shutdown(reason):
     pass
