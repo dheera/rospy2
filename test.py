@@ -19,17 +19,16 @@ class TestROS1Node(object):
 
     def start(self):
         self.rate = rospy.Rate(10)
-
         while not rospy.is_shutdown():
             self.rate.sleep()
             self.count += 1
-            self.pub_message.publish("foo %d" % self.count)
+            self.pub_message.publish(String(data = "foo %d" % self.count))
             rospy.logwarn_throttle(2, "this is a warning message that should appear at most every 2 seconds")
 
         rospy.logwarn("shutting down")
 
     def on_message(self, msg):
-        rospy.loginfo("received message: %s", msg.data)
+        rospy.loginfo("received message: %s" % msg.data)
 
 if __name__ == "__main__":
     TestROS1Node().start()

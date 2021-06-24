@@ -7,7 +7,7 @@ import sys
 import time
 import types
 import threading
-from constants import *
+from .constants import *
 
 rclpy.init(args = sys.argv)
 
@@ -26,7 +26,7 @@ def get_param(param_name, default_value = None):
     global _node
     return _node.get_parameter_or(param_name, default_value)._value
 
-def init_node(node_name, anonymous=False, log_level=rospy.INFO, disable_signals=False):
+def init_node(node_name, anonymous=False, log_level=INFO, disable_signals=False):
     global _node, _logger, _clock, _thread_spin
     _node = rclpy.create_node(
         node_name,
@@ -40,27 +40,42 @@ def init_node(node_name, anonymous=False, log_level=rospy.INFO, disable_signals=
     _thread_spin.start()
 
 def is_shutdown():
-    return rclpy.ok()
+    return not rclpy.ok()
 
 def logdebug(log_text):
     global _logger
     _logger.debug(log_text)
 
+logdebug_once = logdebug
+logdebug_throttle = lambda rate, msg: logdebug(msg)
+
 def loginfo(log_text):
     global _logger
     _logger.info(log_text)
+
+loginfo_once = loginfo
+loginfo_throttle = lambda rate, msg: loginfo(msg)
 
 def logwarn(log_text):
     global _logger
     _logger.warn(log_text)
 
+logwarn_once = logwarn
+logwarn_throttle = lambda rate, msg: logwarn(msg)
+
 def logerr(log_text):
     global _logger
     _logger.error(log_text)
 
+logerr_once = logerr
+logerr_throttle = lambda rate, msg: logerr(mssg)
+
 def logfatal(log_text):
     global _logger
     _logger.fatal(log_text)
+
+logfatal_once = logfatal
+logfatal_throttle = lambda rate, msg: logfatal(msg)
 
 def on_shutdown(h):
     pass
@@ -152,7 +167,7 @@ class Subscriber(object):
         self.type = _ros2_type_to_type_name(topic_type)
         self.callback = callback
         self.callback_args = callback_args
-        self._sub = _node.create_subscription(topic_type, topic_name, self.callback)
+        self._sub = _node.create_subscription(topic_type, topic_name, self.callback, 10)
         self.get_num_connections = lambda: 1 # No good ROS2 equivalent
 
     def __del__(self):
@@ -274,7 +289,7 @@ class TimerEvent(object):
         self.last_expected = last_expected
         self.last_real = last_real
         self.current_expected = current_expected
-        self current_real = current_real
+        self.current_real = current_real
         self.last_duration = last_duration
 
 class ServiceProxy(object):
