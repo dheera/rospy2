@@ -66,13 +66,43 @@ def wait_for_service():
     pass
 
 class Publisher(object):
-    pass
+    def __init__(self, topic_type, topic_name):
+        self._pub = _node.create_publisher(topic_type, topic_name)
+
+    def __del__(self):
+        pass
+
+    def publish(self, msg):
+        self._pub.publish(msg)
 
 class Subscriber(object):
-    pass
+    def __init__(self, topic_name, topic_type, callback, args = ()):
+        self._sub = _node.create_subscription(topic_type, topic_name, callback)
+
+    def __del__(self):
+        _node.destroy_subscription(self._sub)
+
+    def unregister(self):
+        _node.destroy_subscription(self._sub)
 
 class Service(object):
-    pass
+    def __init__(self, service_name, service_type, callback):
+        self._srv = _node.create_service(service_type, service_name, callback)
+
+    def __del__(self):
+        pass
+
+class ServiceProxy(object):
+    def __init__(self, service_name, service_type):
+        self._client = _node.create_client(service_type, service_name)
+
+    def __del__(self):
+        pass
+    
+    def __call__(self, req):
+        resp = self._client.call_async(req)
+        rclpy.spin_until_future_complete(_node, resp)
+        return resp
 
 class Duration(object):
     pass
