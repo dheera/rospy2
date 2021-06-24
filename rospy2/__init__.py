@@ -162,14 +162,14 @@ class Service(object):
         self._srv = _node.create_service(service_type, service_name, callback)
 
     def __del__(self):
-        pass
+        _node.destroy_service(self._srv)
 
 class ServiceProxy(object):
     def __init__(self, service_name, service_type):
         self._client = _node.create_client(service_type, service_name)
 
     def __del__(self):
-        pass
+        _node.destroy_client(self._client)
     
     def __call__(self, req):
         resp = self._client.call_async(req)
