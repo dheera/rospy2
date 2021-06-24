@@ -23,11 +23,11 @@ _thread_spin = None
 _wait_for_message_release = False
 
 def get_param(param_name, default_value = None):
-    global _node, _logger
+    global _node
     return _node.get_parameter_or(param_name, default_value)._value
 
 def init_node(node_name, anonymous=False, log_level=rospy.INFO, disable_signals=False):
-    global _node, _logger
+    global _node, _logger, _clock, _thread_spin
     _node = rclpy.create_node(
         node_name,
         allow_undeclared_parameters = True,
@@ -43,29 +43,30 @@ def is_shutdown():
     return rclpy.ok()
 
 def logdebug(log_text):
-    global _node, _logger
+    global _logger
     _logger.debug(log_text)
 
 def loginfo(log_text):
-    global _node, _logger
+    global _logger
     _logger.info(log_text)
 
 def logwarn(log_text):
-    global _node, _logger
+    global _logger
     _logger.warn(log_text)
 
 def logerr(log_text):
-    global _node, _logger
+    global _logger
     _logger.error(log_text)
 
 def logfatal(log_text):
-    global _node, _logger
+    global _logger
     _logger.fatal(log_text)
 
 def on_shutdown(h):
     pass
 
 def set_param(parameter_name, parameter_value):
+    global _node
     if type(parameter_value) is str:
         parameter_type = rclpy.Parameter.Type.STRING
     elif type(parameter_value) is float:
@@ -95,16 +96,19 @@ def spin():
     _thread_spin.join()
 
 def wait_for_message(topic_name, topic_type):
-    wait_for_message._release = False
-    _sub = _node.create_subscriber(topic_name, topic_type, _release_wait_for_message)
+    global _node, _wait_for_message_release
+    _wait_for_message_release = False
+    sub = _node.create_subscriber(topic_name, topic_type, _release_wait_for_message)
     while not _wait_for_message_release:
         time.sleep(0.1)
-    _node.destroy_subscriber(_sub)
+    _node.destroy_subscriber(sub)
 
 def _release_wait_for_message(self, msg):
+    global _wait_for_message_release
     _wait_for_message_release = True
 
 def wait_for_service(service_name):
+    global _node
     abs_service_name = os.path.join(_node.get_namespace(), service_name)
     while True:
         for service in _node.get_service_names_and_types():
@@ -114,6 +118,7 @@ def wait_for_service(service_name):
 
 class Publisher(object):
     def __init__(self, topic_name, topic_type, queue_size = 1):
+        global _node
         self.reg_type = "pub"
         self.data_class = topic_type
         self.name = topic_name
@@ -123,6 +128,7 @@ class Publisher(object):
         self.get_num_connections = self._pub.get_subscription_count
 
     def __del__(self):
+        global _node
         _node.destroy_publisher(self._pub)
 
     @property
@@ -133,10 +139,12 @@ class Publisher(object):
         self._pub.publish(msg)
 
     def unregister(self):
+        global _node
         _node.destroy_publisher(self._pub)
 
 class Subscriber(object):
     def __init__(self, topic_name, topic_type, callback, callback_args = ()):
+        global _node
         self.reg_type = "sub"
         self.data_class = topic_type
         self.name = topic_name
@@ -148,6 +156,7 @@ class Subscriber(object):
         self.get_num_connections = lambda: 1 # No good ROS2 equivalent
 
     def __del__(self):
+        global _node
         _node.destroy_subscription(self._sub)
 
     @property
@@ -155,29 +164,36 @@ class Subscriber(object):
         return hashlib.md5(str(self.type.get_fields_and_field_types()).encode("utf-8")).hexdigest()
 
     def unregister(self):
+        global _node
         _node.destroy_subscription(self._sub)
 
 class Service(object):
     def __init__(self, service_name, service_type, callback):
+        global _node
         self._srv = _node.create_service(service_type, service_name, callback)
 
     def __del__(self):
+        global _node
         _node.destroy_service(self._srv)
 
 class ServiceProxy(object):
     def __init__(self, service_name, service_type):
+        global _node
         self._client = _node.create_client(service_type, service_name)
 
     def __del__(self):
+        global _node
         _node.destroy_client(self._client)
     
     def __call__(self, req):
+        global _node
         resp = self._client.call_async(req)
         rclpy.spin_until_future_complete(_node, resp)
         return resp
 
 class Duration(object):
     def __new__(cls, secs, nsecs = 0):
+        global _node
         d = rclpy.duration.Duration(nanoseconds = secs * 1000000000 + nsecs)
         d.to_nsec = types.MethodType(lambda self: self.nanoseconds, d)
         d.to_sec = types.MethodType(lambda self: self.nanoseconds / 1e9, d)
@@ -196,10 +212,6 @@ class Duration(object):
     @classmethod
     def is_zero(cls, d):
         return d.nanoseconds == 0
-
-    @classmethod
-    def now(cls):
-        return _clock.now()
 
 class Time(object):
     def __new__(cls, secs, nsecs = 0):
@@ -224,13 +236,21 @@ class Time(object):
 
     @classmethod
     def now(cls):
-        return _clock.now()
+        global _clock
+        t = _clock.now()
+        t.to_nsec = types.MethodType(lambda self: self.nanoseconds, t)
+        t.to_sec = types.MethodType(lambda self: self.nanoseconds / 1e9, t)
+        t.secs = secs
+        t.nsecs = nsecs
+        return t
 
 class Rate(object):
     def __init__(self, hz):
+        global _node
         self._rate = _node.create_rate(hz)
 
     def __del__(self):
+        global _node
         _node.destroy_rate(self._rate)
 
     def sleep(self):
@@ -238,10 +258,12 @@ class Rate(object):
 
 class Timer(object):
     def __init__(self, timer_period, callback):
+        global _node
         self.callback = callback
         self._timer = _node.create_timer(timer_period, self.ros2_callback)
 
     def __del__(self):
+        global _node
         _node.destroy_timer(self._timer)
 
     def ros2_callback(self):
