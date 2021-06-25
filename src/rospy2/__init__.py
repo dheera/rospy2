@@ -4,6 +4,7 @@ import hashlib
 import os
 import random
 import rclpy
+import rclpy.logging
 import rclpy.qos
 import sys
 import time
