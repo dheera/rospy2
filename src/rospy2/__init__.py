@@ -9,6 +9,7 @@ import time
 import types
 import threading
 from .constants import *
+import builtin_interfaces.msg
 
 rclpy.init(args = sys.argv)
 
@@ -232,39 +233,23 @@ class Duration(object):
     def from_seconds(cls, secs):
         return rclpy.duration.Duration(nanosecods = secs * 1000000000)
 
-    @classmethod
-    def is_zero(cls, d):
-        return d.nanoseconds == 0
-
 class Time(object):
     def __new__(cls, secs, nsecs = 0):
-        t = rclpy.time.Time(nanoseconds = secs * 1000000000 + nsecs)
-        t.to_nsec = types.MethodType(lambda self: self.nanoseconds, t)
-        t.to_sec = types.MethodType(lambda self: self.nanoseconds / 1e9, t)
-        t.secs = secs
-        t.nsecs = nsecs
-        return t
+        return builtin_interfaces.msg.Time(sec = secs, nanosec = nsecs)
 
     @classmethod
     def from_sec(cls, secs):
-        return rclpy.time.Time(nanosecods = secs * 1000000000)
+        return builtin_interfaces.msg.Time(sec = secs)
 
     @classmethod
     def from_seconds(cls, secs):
-        return rclpy.time.Time(nanosecods = secs * 1000000000)
-
-    @classmethod
-    def is_zero(cls, t):
-        return t.nanoseconds == 0
+        return builtin_interfaces.msg.Time(sec = secs)
 
     @classmethod
     def now(cls):
         global _clock
-        t = _clock.now()
-        t.to_nsec = types.MethodType(lambda self: self.nanoseconds, t)
-        t.to_sec = types.MethodType(lambda self: self.nanoseconds / 1e9, t)
-        t.secs, t.nsecs = t.seconds_nanoseconds()
-        return t
+        secs, nsecs = _clock.now().seconds_nanoseconds()
+        return builtin_interfaces.msg.Time(sec = secs, nanosec = nsecs)
 
 class Rate(object):
     def __init__(self, hz):
@@ -337,4 +322,7 @@ def _ros2_type_to_type_name(ros2_type):
     except:
         # this shouldn't happen but try harder, don't crash the robot for something silly like this
         return str(ros2_type).replace("<class '", "").replace("'>", "")
+
+builtin_interfaces.msg.Time.to_nsec = lambda self: self.sec * 1000000000 + self.nanosec
+builtin_interfaces.msg.Time.to_sec = lambda self: self.sec + self.nanosec / 1e9
 
