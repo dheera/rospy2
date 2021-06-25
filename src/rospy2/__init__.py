@@ -104,6 +104,8 @@ def signal_shutdown(reason):
     rclpy.shutdown()
 
 def sleep(duration):
+    if type(duration) is rclpy.duration.Duration:
+        time.sleep(duration.nanoseconds / 1e9)
     time.sleep(duration) # TODO: replace with version that respects ROS time
 
 def spin():
