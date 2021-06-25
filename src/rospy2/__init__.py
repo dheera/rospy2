@@ -345,3 +345,10 @@ builtin_interfaces.msg.Time.to_nsec = lambda self: self.sec * 1000000000 + self.
 builtin_interfaces.msg.Time.to_sec = lambda self: self.sec + self.nanosec / 1e9
 builtin_interfaces.msg.Time.is_zero = lambda self: self.sec == 0 and self.nanosec == 0
 
+try:
+    import diagnostic_msgs.msg
+    diagnostic_msgs.msg.KeyValue.__oldinit__ = diagnostic_msgs.msg.KeyValue.__init__
+    diagnostic_msgs.msg.KeyValue.__init__ = lambda self, key="", value="": \
+        diagnostic_msgs.msg.KeyValue.__oldinit__(self, key = key, value = value)
+except:
+    pass #user hasn't installed diagnostic_msgs, we don't need to do anything
