@@ -359,7 +359,7 @@ except ImportError:
 
 import std_msgs.msg
 std_msgs.msg.Bool.__oldinit__ = std_msgs.msg.Bool.__init__
-std_msgs.msg.Bool.__init__ = lambda self, data = 0: std_msgs.msg.Bool.__oldinit__(self, data = data)
+std_msgs.msg.Bool.__init__ = lambda self, data = False: std_msgs.msg.Bool.__oldinit__(self, data = data)
 std_msgs.msg.Byte.__oldinit__ = std_msgs.msg.Byte.__init__
 std_msgs.msg.Byte.__init__ = lambda self, data = 0: std_msgs.msg.Byte.__oldinit__(self, data = data)
 std_msgs.msg.Int8.__oldinit__ = std_msgs.msg.Int8.__init__
@@ -378,4 +378,10 @@ std_msgs.msg.UInt32.__oldinit__ = std_msgs.msg.UInt32.__init__
 std_msgs.msg.UInt32.__init__ = lambda self, data = 0: std_msgs.msg.UInt32.__oldinit__(self, data = data)
 std_msgs.msg.UInt64.__oldinit__ = std_msgs.msg.UInt64.__init__
 std_msgs.msg.UInt64.__init__ = lambda self, data = 0: std_msgs.msg.UInt64.__oldinit__(self, data = data)
+std_msgs.msg.Float32.__oldinit__ = std_msgs.msg.Float32.__init__
+std_msgs.msg.Float32.__init__ = lambda self, data = 0.0: std_msgs.msg.Float32.__oldinit__(self, data = data)
+std_msgs.msg.Float64.__oldinit__ = std_msgs.msg.Float64.__init__
+std_msgs.msg.Float64.__init__ = lambda self, data = 0.0: std_msgs.msg.Float64.__oldinit__(self, data = data)
+std_msgs.msg.String.__oldinit__ = std_msgs.msg.String.__init__
+std_msgs.msg.String.__init__ = lambda self, data = "": std_msgs.msg.String.__oldinit__(self, data = data)
 
