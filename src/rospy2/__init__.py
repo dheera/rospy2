@@ -42,40 +42,59 @@ def init_node(node_name, anonymous=False, log_level=INFO, disable_signals=False)
 def is_shutdown():
     return not rclpy.ok()
 
+def _once(fn):
+    def onced(text):
+        if text == onced.last_text:
+            return
+        onced.last_text = text
+        fn(text)
+    onced.last_text = ""
+    return onced
+
+def _throttle(fn):
+    def throttled(interval, text):
+        t = time.time()
+        if t - throttled.last_time < interval:
+            return
+        throttled.last_time = t
+        fn(text)
+    throttled.last_time = 0
+    return throttled
+
 def logdebug(log_text):
     global _logger
     _logger.debug(log_text)
 
-logdebug_once = logdebug
-logdebug_throttle = lambda rate, msg: logdebug(msg)
+logdebug_once = _once(logdebug)
+logdebug_throttle = _throttle(logdebug)
 
 def loginfo(log_text):
     global _logger
     _logger.info(log_text)
 
-loginfo_once = loginfo
-loginfo_throttle = lambda rate, msg: loginfo(msg)
+loginfo_once = _once(loginfo)
+loginfo_throttle = _throttle(loginfo)
 
 def logwarn(log_text):
     global _logger
     _logger.warn(log_text)
 
-logwarn_once = logwarn
-logwarn_throttle = lambda rate, msg: logwarn(msg)
+logwarn_once = _once(logwarn)
+logwarn_throttle = _throttle(logwarn)
 
 def logerr(log_text):
     global _logger
     _logger.error(log_text)
 
-logerr_once = logerr
-logerr_throttle = lambda rate, msg: logerr(mssg)
+logerr_once = _once(logerr)
+logerr_throttle = _throttle(logerr)
 
 def logfatal(log_text):
     global _logger
     _logger.fatal(log_text)
 
-logfatal_once = logfatal
-logfatal_throttle = lambda rate, msg: logfatal(msg)
+logfatal_once = _once(logfatal)
+logfatal_throttle = _throttle(logfatal)
 
 def on_shutdown(h):
     pass
@@ -167,12 +186,15 @@ class Subscriber(object):
         self.type = _ros2_type_to_type_name(topic_type)
         self.callback = callback
         self.callback_args = callback_args
-        self._sub = _node.create_subscription(topic_type, topic_name, self.callback, 10)
+        self._sub = _node.create_subscription(topic_type, topic_name, self._ros2_callback, 10)
         self.get_num_connections = lambda: 1 # No good ROS2 equivalent
 
     def __del__(self):
         global _node
         _node.destroy_subscription(self._sub)
+
+    def _ros2_callback(self, msg):
+        self.callback(msg, *self.callback_args)
 
     @property
     def md5sum(self): # No good ROS2 equivalent, fake it reasonably
@@ -275,13 +297,13 @@ class Timer(object):
     def __init__(self, timer_period, callback):
         global _node
         self.callback = callback
-        self._timer = _node.create_timer(timer_period, self.ros2_callback)
+        self._timer = _node.create_timer(timer_period, self._ros2_callback)
 
     def __del__(self):
         global _node
         _node.destroy_timer(self._timer)
 
-    def ros2_callback(self):
+    def _ros2_callback(self):
         self.callback(TimerEvent(0, 0, 0, 0, 0)) # TODO: fill in these values
 
 class TimerEvent(object):
