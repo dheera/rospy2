@@ -223,7 +223,7 @@ class Duration(object):
         d = rclpy.duration.Duration(nanoseconds = secs * 1000000000 + nsecs)
         d.to_nsec = types.MethodType(lambda self: self.nanoseconds, d)
         d.to_sec = types.MethodType(lambda self: self.nanoseconds / 1e9, d)
-        d.is_zero = types.MethodType(lambda self: self.nanoseconds == 0)
+        d.is_zero = types.MethodType(lambda self: self.nanoseconds == 0, d)
         d.secs = secs
         d.nsecs = nsecs
         return d
