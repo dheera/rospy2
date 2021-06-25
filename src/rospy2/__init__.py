@@ -300,13 +300,7 @@ class TimerEvent(object):
         self.current_real = current_real
         self.last_duration = last_duration
 
-class ServiceProxy(object):
-    pass
-
 class ROSException(Exception):
-    pass
-
-class ROSException(ROSException):
     pass
 
 class ROSInternalException(ROSException):
