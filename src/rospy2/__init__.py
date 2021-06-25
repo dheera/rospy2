@@ -357,6 +357,20 @@ try:
 except ImportError:
     pass #user hasn't installed diagnostic_msgs, we don't need to do anything
 
+try:
+    import geometry_msgs.msg
+    geometry_msgs.msg.Quaternion.__oldinit__ = geometry_msgs.msg.Quaternion.__init__
+    geometry_msgs.msg.Quaternion.__init__ = lambda self, x=0.0, y=0.0, z=0.0, w=0.0: \
+        geometry_msgs.msg.Quaternion.__oldinit__(self, x = float(x), y = float(y), z = float(z), w = float(w))
+    geometry_msgs.msg.Point.__oldinit__ = geometry_msgs.msg.Point.__init__
+    geometry_msgs.msg.Point.__init__ = lambda self, x=0.0, y=0.0, z=0.0: \
+        geometry_msgs.msg.Point.__oldinit__(self, x = float(x), y = float(y), z = float(z))
+    geometry_msgs.msg.Point32.__oldinit__ = geometry_msgs.msg.Point32.__init__
+    geometry_msgs.msg.Point32.__init__ = lambda self, x=0.0, y=0.0, z=0.0: \
+        geometry_msgs.msg.Point32.__oldinit__(self, x = float(x), y = float(y), z = float(z))
+except ImportError:
+    pass #user hasn't installed geometry_msgs, we don't need to do anything
+
 import std_msgs.msg
 std_msgs.msg.Bool.__oldinit__ = std_msgs.msg.Bool.__init__
 std_msgs.msg.Bool.__init__ = lambda self, data = False: std_msgs.msg.Bool.__oldinit__(self, data = data)
@@ -379,9 +393,9 @@ std_msgs.msg.UInt32.__init__ = lambda self, data = 0: std_msgs.msg.UInt32.__oldi
 std_msgs.msg.UInt64.__oldinit__ = std_msgs.msg.UInt64.__init__
 std_msgs.msg.UInt64.__init__ = lambda self, data = 0: std_msgs.msg.UInt64.__oldinit__(self, data = data)
 std_msgs.msg.Float32.__oldinit__ = std_msgs.msg.Float32.__init__
-std_msgs.msg.Float32.__init__ = lambda self, data = 0.0: std_msgs.msg.Float32.__oldinit__(self, data = data)
+std_msgs.msg.Float32.__init__ = lambda self, data = 0.0: std_msgs.msg.Float32.__oldinit__(self, data = float(data))
 std_msgs.msg.Float64.__oldinit__ = std_msgs.msg.Float64.__init__
-std_msgs.msg.Float64.__init__ = lambda self, data = 0.0: std_msgs.msg.Float64.__oldinit__(self, data = data)
+std_msgs.msg.Float64.__init__ = lambda self, data = 0.0: std_msgs.msg.Float64.__oldinit__(self, data = float(data))
 std_msgs.msg.String.__oldinit__ = std_msgs.msg.String.__init__
 std_msgs.msg.String.__init__ = lambda self, data = "": std_msgs.msg.String.__oldinit__(self, data = data)
 
