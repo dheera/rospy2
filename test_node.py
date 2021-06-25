@@ -9,7 +9,7 @@ from std_msgs.msg import String
 
 class TestROS1Node(object):
     def __init__(self):
-        rospy.init_node("test_node")
+        rospy.init_node("test_node", log_level = rospy.DEBUG)
         rospy.logdebug("initializing")
         self.param_rate = rospy.get_param("rate", 10.0)
         self.sub_message = rospy.Subscriber("/message", String, self.on_message)

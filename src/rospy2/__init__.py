@@ -2,6 +2,7 @@
 
 import hashlib
 import os
+import random
 import rclpy
 import rclpy.qos
 import sys
@@ -37,6 +38,9 @@ def get_param(param_name, default_value = None):
 
 def init_node(node_name, anonymous=False, log_level=INFO, disable_signals=False):
     global _node, _logger, _clock, _thread_spin
+    if anonymous:
+        node_name += "_" + str(random.randint(10000,99999))
+
     _node = rclpy.create_node(
         node_name,
         allow_undeclared_parameters = True,
@@ -44,6 +48,15 @@ def init_node(node_name, anonymous=False, log_level=INFO, disable_signals=False)
     )
     _logger = _node.get_logger()
     _clock = _node.get_clock()
+
+    ros2_log_level = {
+        DEBUG: rclpy.logging.LoggingSeverity.DEBUG,
+        INFO: rclpy.logging.LoggingSeverity.DEBUG,
+        WARN: rclpy.logging.LoggingSeverity.WARN,
+        ERROR: rclpy.logging.LoggingSeverity.ERROR,
+        FATAL: rclpy.logging.LoggingSeverity.FATAL,
+    }.get(log_level, rclpy.logging.LoggingSeverity.UNSET)
+    rclpy.logging.set_logger_level(_logger.name, ros2_log_level)
 
     _thread_spin = threading.Thread(target=_spin, daemon=True)
     _thread_spin.start()
