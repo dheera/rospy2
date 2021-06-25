@@ -39,7 +39,7 @@ source /opt/ros/noetic/setup.bash
 
 ROS2:
 ```
-source /opt/ros/noetic/setup.bash
+source /opt/ros/foxy/setup.bash
 ./test_node.py
 ```
 
