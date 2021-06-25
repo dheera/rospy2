@@ -51,7 +51,7 @@ source /opt/ros/foxy/setup.bash
 
 * Subscribers
 
-* Rate, Time, Duration
+* `rospy.Rate`, `rospy.Time`, `rospy.Time.now()`, `rospy.Duration`
 
 * Parameters (in the same namespace as the node)
 
