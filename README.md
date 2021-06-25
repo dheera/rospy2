@@ -29,10 +29,17 @@ except ImportError:
     import rospy2 as rospy
 ```
 
-You should then be able to just run your node and it should work on ROS2. A test node is provided:
+You should then be able to just run your node and it should work on ROS2. A test node that works in either ROS1 or ROS2 is provided:
 
+ROS1:
 ```
-source /opt/ros/foxy/setup.bash
+source /opt/ros/noetic/setup.bash
+./test_node.py
+```
+
+ROS2:
+```
+source /opt/ros/noetic/setup.bash
 ./test_node.py
 ```
 
