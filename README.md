@@ -60,5 +60,5 @@ source /opt/ros/foxy/setup.bash
 
 * There is no "parameter server" in ROS2, so ROS1 nodes that expect global parameters aren't going to work.
 
-* Since your callbacks will receive actual ROS2 messages, those that have numeric arrays will see them as an array.array or numpy.ndarray instead of a Python list. This may trip up some code that expects a Python list.
+* Since your callbacks will receive actual ROS2 messages, those messages that have numeric array fields (e.g. std_msgs/Int32MultiArray or sensor_msgs/Image)  will see those data fields as an array.array or numpy.ndarray instead of a Python list. This may trip up some code that expects a Python list. If your ROS1 code only accesses the data by index or constructs a numpy array as its first thing it does, it should theoretically not be an issue.
 
