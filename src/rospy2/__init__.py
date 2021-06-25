@@ -248,6 +248,8 @@ class Time(object):
     @classmethod
     def now(cls):
         global _clock
+        if _clock is None:
+            raise ROSInitException("time is not initialized. Have you called init_node()?")
         secs, nsecs = _clock.now().seconds_nanoseconds()
         return builtin_interfaces.msg.Time(sec = secs, nanosec = nsecs)
 
@@ -287,6 +289,9 @@ class TimerEvent(object):
 class ROSException(Exception):
     pass
 
+class ROSInitException(ROSException):
+    pass
+
 class ROSInternalException(ROSException):
     pass
 
@@ -322,6 +327,16 @@ def _ros2_type_to_type_name(ros2_type):
     except:
         # this shouldn't happen but try harder, don't crash the robot for something silly like this
         return str(ros2_type).replace("<class '", "").replace("'>", "")
+
+class _Module: pass
+
+rostime = _Module()
+rostime.Time = Time
+rostime.Duration = Duration
+
+exceptions = _Module()
+exceptions.ROSException = ROSException
+exceptions.ROSInitException = ROSInitException
 
 builtin_interfaces.msg.Time.to_nsec = lambda self: self.sec * 1000000000 + self.nanosec
 builtin_interfaces.msg.Time.to_sec = lambda self: self.sec + self.nanosec / 1e9
