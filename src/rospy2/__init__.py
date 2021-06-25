@@ -11,8 +11,7 @@ from .constants import *
 
 rclpy.init(args = sys.argv)
 
-# Variables starting with an underscore are stored ROS2 objects and are not
-# intended to be used directly.
+# Variables starting with an underscore are private / not intended to be used directly.
 # All normally-named functions/classes/methods are designed to function exactly
 # as per their ROS1 namesake.
 
@@ -21,6 +20,7 @@ _logger = None
 _clock = None
 _thread_spin = None
 _wait_for_message_release = False
+_on_shutdown = None
 
 def get_param(param_name, default_value = None):
     global _node
@@ -36,30 +36,16 @@ def init_node(node_name, anonymous=False, log_level=INFO, disable_signals=False)
     _logger = _node.get_logger()
     _clock = _node.get_clock()
 
-    _thread_spin = threading.Thread(target=rclpy.spin, args=(_node, ), daemon=True)
+    _thread_spin = threading.Thread(target=_spin, daemon=True)
     _thread_spin.start()
 
-def is_shutdown():
-    return not rclpy.ok()
+def _spin():
+    global _on_shutdown, _node
+    rclpy.spin(_node)
+    if _on_shutdown:
+        _on_shutdown()
 
-def _once(fn):
-    def onced(text):
-        if text == onced.last_text:
-            return
-        onced.last_text = text
-        fn(text)
-    onced.last_text = ""
-    return onced
-
-def _throttle(fn):
-    def throttled(interval, text):
-        t = time.time()
-        if t - throttled.last_time < interval:
-            return
-        throttled.last_time = t
-        fn(text)
-    throttled.last_time = 0
-    return throttled
+is_shutdown = lambda: not rclpy.ok()
 
 logdebug = lambda text: _logger.debug(text)
 logdebug_once = lambda text: _logger.debug(text, once = True)
@@ -81,8 +67,9 @@ logfatal = lambda text: _logger.fatal(text)
 logfatal_once = lambda text: _logger.fatal(text, once = True)
 logfatal_throttle = lambda interval, text: _logger.fatal(text, throttle_duration_sec = interval)
 
-def on_shutdown(h):
-    pass
+def on_shutdown(handler):
+    global _on_shutdown
+    _on_shutdown = handler
 
 def set_param(parameter_name, parameter_value):
     global _node
