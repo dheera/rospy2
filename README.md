@@ -51,9 +51,11 @@ source /opt/ros/foxy/setup.bash
 
 * Subscribers
 
-* Rate
+* Rate, Time, Duration
 
-* Parameters in the same namespace as the node
+* Parameters (in the same namespace as the node)
+
+* ROS1-style positional constructors e.g. `String("hello")` or `Quaternion(1,2,3,4)` that ROS2 does not allow
 
 ## Not supported yet
 
