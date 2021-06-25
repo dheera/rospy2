@@ -59,10 +59,10 @@ def init_node(node_name, anonymous=False, log_level=INFO, disable_signals=False)
     }.get(log_level, rclpy.logging.LoggingSeverity.UNSET)
     rclpy.logging.set_logger_level(_logger.name, ros2_log_level)
 
-    _thread_spin = threading.Thread(target=_spin, daemon=True)
+    _thread_spin = threading.Thread(target=_thread_spin_target, daemon=True)
     _thread_spin.start()
 
-def _spin():
+def _thread_spin_target():
     global _on_shutdown, _node
     rclpy.spin(_node)
     if _on_shutdown:
