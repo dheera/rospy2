@@ -35,3 +35,28 @@ You should then be able to just run your node and it should work on ROS2. A test
 source /opt/ros/foxy/setup.bash
 ./test_node.py
 ```
+
+# Status
+
+## Supported
+
+* Publishers
+
+* Subscribers
+
+* Parameters in the same namespace as the node
+
+## Not supported yet
+
+* Parameters in other namespaces
+
+* Service calls (supported but not tested)
+
+## Known issues
+
+* Some *message* types changed between ROS1 and ROS2. For example rosgraph_msgs/Log is now rcl_interfaces/Log and the message definition is slightly different.
+
+* There is no "parameter server" in ROS2, so ROS1 nodes that expect global parameters aren't going to work.
+
+* Since your callbacks will receive actual ROS2 messages, those that have numeric arrays will see them as an array.array or numpy.ndarray instead of a Python list. This may trip up some code that expects a Python list.
+
