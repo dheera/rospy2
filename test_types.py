@@ -90,5 +90,8 @@ print(Header())
 print(Header(0, rospy.Time(), "base_link"))
 print(Header(seq=0, stamp=rospy.Time(), frame_id="base_link"))
 print(Header().seq)
+print(Header().stamp.nsecs)
+print(Header().stamp.secs)
+print(Header().frame_id)
 
 print("Success")

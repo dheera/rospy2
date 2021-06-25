@@ -358,6 +358,8 @@ exceptions.ROSInitException = ROSInitException
 builtin_interfaces.msg.Time.to_nsec = lambda self: self.sec * 1000000000 + self.nanosec
 builtin_interfaces.msg.Time.to_sec = lambda self: self.sec + self.nanosec / 1e9
 builtin_interfaces.msg.Time.is_zero = lambda self: self.sec == 0 and self.nanosec == 0
+builtin_interfaces.msg.Time.secs = property(lambda self: self.sec)
+builtin_interfaces.msg.Time.nsecs = property(lambda self: self.nanosec)
 
 # Allow initializing messages with positional arguments which ROS1 allows but ROS2 doesn't, e.g.
 # KeyValue("key", "value")
