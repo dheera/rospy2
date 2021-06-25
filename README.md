@@ -55,7 +55,7 @@ source /opt/ros/foxy/setup.bash
 
 * Parameters (in the same namespace as the node)
 
-* ROS1-style positional constructors e.g. `String("hello")` or `Quaternion(1,2,3,4)` that ROS2 does not allow
+* ROS1-style positional constructors e.g. `String("hello")` or `Quaternion(1,2,3,4)` that ROS2 does not allow, for a few commonly-used types
 
 ## Not supported yet
 
