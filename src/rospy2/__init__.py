@@ -24,7 +24,14 @@ _on_shutdown = None
 
 def get_param(param_name, default_value = None):
     global _node
-    return _node.get_parameter_or(param_name, default_value)._value
+    if param_name.startswith("/"):
+        logerror("Getting parameters of other nodes is not yet supported")
+        return 0
+
+    param_name = param_name.strip("~")
+    if not _node.has_parameter(param_name):
+        _node.declare_parameter(param_name, default_value)
+    return _node.get_parameter(param_name)._value
 
 def init_node(node_name, anonymous=False, log_level=INFO, disable_signals=False):
     global _node, _logger, _clock, _thread_spin
