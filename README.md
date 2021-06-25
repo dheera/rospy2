@@ -44,6 +44,8 @@ source /opt/ros/foxy/setup.bash
 
 * Subscribers
 
+* Rate
+
 * Parameters in the same namespace as the node
 
 ## Not supported yet
