@@ -11,6 +11,7 @@ class TestROS1Node(object):
     def __init__(self):
         rospy.init_node("test_node")
         rospy.logdebug("initializing")
+        self.param_rate = rospy.get_param("rate", 10.0)
         self.sub_message = rospy.Subscriber("/message", String, self.on_message)
         self.pub_message = rospy.Publisher("/message", String, queue_size = 1)
         self.count = 0
@@ -18,7 +19,7 @@ class TestROS1Node(object):
         rospy.loginfo_once("this is a info message that is supposed to only appear once")
 
     def start(self):
-        self.rate = rospy.Rate(10)
+        self.rate = rospy.Rate(self.param_rate)
         while not rospy.is_shutdown():
             self.rate.sleep()
             self.count += 1
