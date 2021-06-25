@@ -251,7 +251,7 @@ class Duration(object):
         return rclpy.duration.Duration(nanosecods = secs * 1000000000)
 
 class Time(object):
-    def __new__(cls, secs, nsecs = 0):
+    def __new__(cls, secs = 0, nsecs = 0):
         return builtin_interfaces.msg.Time(sec = secs, nanosec = nsecs)
 
     @classmethod
@@ -390,6 +390,8 @@ std_msgs.msg.Bool.__oldinit__ = std_msgs.msg.Bool.__init__
 std_msgs.msg.Bool.__init__ = lambda self, data = False: std_msgs.msg.Bool.__oldinit__(self, data = data)
 std_msgs.msg.Byte.__oldinit__ = std_msgs.msg.Byte.__init__
 std_msgs.msg.Byte.__init__ = lambda self, data = 0: std_msgs.msg.Byte.__oldinit__(self, data = data)
+std_msgs.msg.Char.__oldinit__ = std_msgs.msg.Char.__init__
+std_msgs.msg.Char.__init__ = lambda self, data = 0: std_msgs.msg.Char.__oldinit__(self, data = data)
 std_msgs.msg.Int8.__oldinit__ = std_msgs.msg.Int8.__init__
 std_msgs.msg.Int8.__init__ = lambda self, data = 0: std_msgs.msg.Int8.__oldinit__(self, data = data)
 std_msgs.msg.Int16.__oldinit__ = std_msgs.msg.Int16.__init__
@@ -412,4 +414,11 @@ std_msgs.msg.Float64.__oldinit__ = std_msgs.msg.Float64.__init__
 std_msgs.msg.Float64.__init__ = lambda self, data = 0.0: std_msgs.msg.Float64.__oldinit__(self, data = float(data))
 std_msgs.msg.String.__oldinit__ = std_msgs.msg.String.__init__
 std_msgs.msg.String.__init__ = lambda self, data = "": std_msgs.msg.String.__oldinit__(self, data = data)
+std_msgs.msg.ColorRGBA.__oldinit__ = std_msgs.msg.ColorRGBA.__init__
+std_msgs.msg.ColorRGBA.__init__ = lambda self, r=0.0, g=0.0, b=0.0, a=0.0: \
+std_msgs.msg.ColorRGBA.__oldinit__(self, r = float(r), g = float(g), b = float(b), a = float(a))
+std_msgs.msg.Header.__oldinit__ = std_msgs.msg.Header.__init__
+std_msgs.msg.Header.seq = property(lambda x: 0)
+std_msgs.msg.Header.__init__ = lambda self, seq = 0, stamp = builtin_interfaces.msg.Time(), frame_id = "": \
+    std_msgs.msg.Header.__oldinit__(self, stamp = stamp, frame_id = frame_id)
 
