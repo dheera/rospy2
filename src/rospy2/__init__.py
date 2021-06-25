@@ -61,40 +61,25 @@ def _throttle(fn):
     throttled.last_time = 0
     return throttled
 
-def logdebug(log_text):
-    global _logger
-    _logger.debug(log_text)
+logdebug = lambda text: _logger.debug(text)
+logdebug_once = lambda text: _logger.debug(text, once = True)
+logdebug_throttle = lambda interval, text: _logger.debug(text, throttle_duration_sec = interval)
 
-logdebug_once = _once(logdebug)
-logdebug_throttle = _throttle(logdebug)
+loginfo = lambda text: _logger.info(text)
+loginfo_once = lambda text: _logger.info(text, once = True)
+loginfo_throttle = lambda interval, text: _logger.info(text, throttle_duration_sec = interval)
 
-def loginfo(log_text):
-    global _logger
-    _logger.info(log_text)
+logwarn = lambda text: _logger.warn(text)
+logwarn_once = lambda text: _logger.warn(text, once = True)
+logwarn_throttle = lambda interval, text: _logger.warn(text, throttle_duration_sec = interval)
 
-loginfo_once = _once(loginfo)
-loginfo_throttle = _throttle(loginfo)
+logerr = lambda text: _logger.error(text)
+logerr_once = lambda text: _logger.error(text, once = True)
+logerr_throttle = lambda interval, text: _logger.error(text, throttle_duration_sec = interval)
 
-def logwarn(log_text):
-    global _logger
-    _logger.warn(log_text)
-
-logwarn_once = _once(logwarn)
-logwarn_throttle = _throttle(logwarn)
-
-def logerr(log_text):
-    global _logger
-    _logger.error(log_text)
-
-logerr_once = _once(logerr)
-logerr_throttle = _throttle(logerr)
-
-def logfatal(log_text):
-    global _logger
-    _logger.fatal(log_text)
-
-logfatal_once = _once(logfatal)
-logfatal_throttle = _throttle(logfatal)
+logfatal = lambda text: _logger.fatal(text)
+logfatal_once = lambda text: _logger.fatal(text, once = True)
+logfatal_throttle = lambda interval, text: _logger.fatal(text, throttle_duration_sec = interval)
 
 def on_shutdown(h):
     pass
