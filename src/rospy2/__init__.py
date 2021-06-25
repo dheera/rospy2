@@ -138,7 +138,11 @@ class Publisher(object):
         self.name = topic_name
         self.resolved_name = topic_name
         self.type = _ros2_type_to_type_name(topic_type)
-        self._pub = _node.create_publisher(topic_type, topic_name, rclpy.qos.QoSProfile(depth = queue_size))
+        self._pub = _node.create_publisher(
+            topic_type,
+            topic_name,
+            rclpy.qos.QoSProfile(depth = queue_size, history = rclpy.qos.HistoryPolicy.KEEP_LAST)
+        )
         self.get_num_connections = self._pub.get_subscription_count
 
     def __del__(self):
