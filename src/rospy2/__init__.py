@@ -345,10 +345,37 @@ builtin_interfaces.msg.Time.to_nsec = lambda self: self.sec * 1000000000 + self.
 builtin_interfaces.msg.Time.to_sec = lambda self: self.sec + self.nanosec / 1e9
 builtin_interfaces.msg.Time.is_zero = lambda self: self.sec == 0 and self.nanosec == 0
 
+# Allow initializing messages with positional arguments which ROS1 allows but ROS2 doesn't, e.g.
+# KeyValue("key", "value")
+# Int32(100)
+
 try:
     import diagnostic_msgs.msg
     diagnostic_msgs.msg.KeyValue.__oldinit__ = diagnostic_msgs.msg.KeyValue.__init__
     diagnostic_msgs.msg.KeyValue.__init__ = lambda self, key="", value="": \
         diagnostic_msgs.msg.KeyValue.__oldinit__(self, key = key, value = value)
-except:
+except ImportError:
     pass #user hasn't installed diagnostic_msgs, we don't need to do anything
+
+import std_msgs.msg
+std_msgs.msg.Bool.__oldinit__ = std_msgs.msg.Bool.__init__
+std_msgs.msg.Bool.__init__ = lambda self, data = 0: std_msgs.msg.Bool.__oldinit__(self, data = data)
+std_msgs.msg.Byte.__oldinit__ = std_msgs.msg.Byte.__init__
+std_msgs.msg.Byte.__init__ = lambda self, data = 0: std_msgs.msg.Byte.__oldinit__(self, data = data)
+std_msgs.msg.Int8.__oldinit__ = std_msgs.msg.Int8.__init__
+std_msgs.msg.Int8.__init__ = lambda self, data = 0: std_msgs.msg.Int8.__oldinit__(self, data = data)
+std_msgs.msg.Int16.__oldinit__ = std_msgs.msg.Int16.__init__
+std_msgs.msg.Int16.__init__ = lambda self, data = 0: std_msgs.msg.Int16.__oldinit__(self, data = data)
+std_msgs.msg.Int32.__oldinit__ = std_msgs.msg.Int32.__init__
+std_msgs.msg.Int32.__init__ = lambda self, data = 0: std_msgs.msg.Int32.__oldinit__(self, data = data)
+std_msgs.msg.Int64.__oldinit__ = std_msgs.msg.Int64.__init__
+std_msgs.msg.Int64.__init__ = lambda self, data = 0: std_msgs.msg.Int64.__oldinit__(self, data = data)
+std_msgs.msg.UInt8.__oldinit__ = std_msgs.msg.UInt8.__init__
+std_msgs.msg.UInt8.__init__ = lambda self, data = 0: std_msgs.msg.UInt8.__oldinit__(self, data = data)
+std_msgs.msg.UInt16.__oldinit__ = std_msgs.msg.UInt16.__init__
+std_msgs.msg.UInt16.__init__ = lambda self, data = 0: std_msgs.msg.UInt16.__oldinit__(self, data = data)
+std_msgs.msg.UInt32.__oldinit__ = std_msgs.msg.UInt32.__init__
+std_msgs.msg.UInt32.__init__ = lambda self, data = 0: std_msgs.msg.UInt32.__oldinit__(self, data = data)
+std_msgs.msg.UInt64.__oldinit__ = std_msgs.msg.UInt64.__init__
+std_msgs.msg.UInt64.__init__ = lambda self, data = 0: std_msgs.msg.UInt64.__oldinit__(self, data = data)
+
