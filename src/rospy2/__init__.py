@@ -358,11 +358,9 @@ exceptions.ROSInitException = ROSInitException
 builtin_interfaces.msg.Time.to_nsec = lambda self: self.sec * 1000000000 + self.nanosec
 builtin_interfaces.msg.Time.to_sec = lambda self: self.sec + self.nanosec / 1e9
 builtin_interfaces.msg.Time.is_zero = lambda self: self.sec == 0 and self.nanosec == 0
-def secs_setter(self, value):
-    self.sec = value
-def nsecs_setter(self, value):
-    self.nanosec = value
+def secs_setter(self, value): self.sec = value
 builtin_interfaces.msg.Time.secs = property(lambda self: self.sec, secs_setter)
+def nsecs_setter(self, value): self.nanosec = value
 builtin_interfaces.msg.Time.nsecs = property(lambda self: self.nanosec, nsecs_setter)
 
 # Allow initializing messages with positional arguments which ROS1 allows but ROS2 doesn't, e.g.
@@ -424,9 +422,8 @@ std_msgs.msg.ColorRGBA.__oldinit__ = std_msgs.msg.ColorRGBA.__init__
 std_msgs.msg.ColorRGBA.__init__ = lambda self, r=0.0, g=0.0, b=0.0, a=0.0: \
 std_msgs.msg.ColorRGBA.__oldinit__(self, r = float(r), g = float(g), b = float(b), a = float(a))
 std_msgs.msg.Header.__oldinit__ = std_msgs.msg.Header.__init__
-def seq_getter(self): return 0
 def seq_setter(self, value): pass
-std_msgs.msg.Header.seq = property(seq_getter, seq_setter)
+std_msgs.msg.Header.seq = property(lambda self: 0, seq_setter)
 std_msgs.msg.Header.__init__ = lambda self, seq = 0, stamp = builtin_interfaces.msg.Time(), frame_id = "": \
     std_msgs.msg.Header.__oldinit__(self, stamp = stamp, frame_id = frame_id)
 
