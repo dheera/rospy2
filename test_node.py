@@ -20,6 +20,7 @@ class TestROS1Node(object):
 
     def start(self):
         self.rate = rospy.Rate(self.param_rate)
+        self.pub_message.publish("message that uses a ros1 shortcut of directly passing a Python str to a publisher")
         while not rospy.is_shutdown():
             self.rate.sleep()
             self.count += 1

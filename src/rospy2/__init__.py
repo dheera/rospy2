@@ -149,6 +149,8 @@ class Publisher(object):
         return hashlib.md5(str(self.type.get_fields_and_field_types()).encode("utf-8")).hexdigest()
 
     def publish(self, msg):
+        if type(msg) in (str, int, float, bool):
+            msg = self.data_class(data = msg)
         self._pub.publish(msg)
 
     def unregister(self):
