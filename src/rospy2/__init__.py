@@ -263,8 +263,7 @@ class Time(object):
         t = _clock.now()
         t.to_nsec = types.MethodType(lambda self: self.nanoseconds, t)
         t.to_sec = types.MethodType(lambda self: self.nanoseconds / 1e9, t)
-        t.secs = secs
-        t.nsecs = nsecs
+        t.secs, t.nsecs = t.seconds_nanoseconds()
         return t
 
 class Rate(object):
