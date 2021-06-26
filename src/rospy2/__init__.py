@@ -389,6 +389,13 @@ try:
 except ImportError:
     pass #user hasn't installed geometry_msgs, we don't need to do anything
 
+try:
+    import rosgraph_msgs.msg
+    import rcl_interfaces.msg
+    rosgraph_msgs.msg.Log = rcl_interfaces.msg.Log
+except:
+    pass
+
 import std_msgs.msg
 std_msgs.msg.Bool.__oldinit__ = std_msgs.msg.Bool.__init__
 std_msgs.msg.Bool.__init__ = lambda self, data = False: std_msgs.msg.Bool.__oldinit__(self, data = data)
