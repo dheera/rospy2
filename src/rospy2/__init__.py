@@ -126,6 +126,12 @@ def spin():
     global _thread_spin
     _thread_spin.join()
 
+def get_time():
+    global _clock
+    if _clock is None:
+        raise ROSInitException("time is not initialized. Have you called init_node()?")
+    return _clock.now().nanoseconds/1e9
+
 def wait_for_message(topic_name, topic_type):
     global _node, _wait_for_message_release
     _wait_for_message_release = False
