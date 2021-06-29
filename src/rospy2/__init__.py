@@ -443,10 +443,9 @@ std_msgs.msg.String.__oldinit__ = std_msgs.msg.String.__init__
 std_msgs.msg.String.__init__ = lambda self, data = "": std_msgs.msg.String.__oldinit__(self, data = data)
 std_msgs.msg.ColorRGBA.__oldinit__ = std_msgs.msg.ColorRGBA.__init__
 std_msgs.msg.ColorRGBA.__init__ = lambda self, r=0.0, g=0.0, b=0.0, a=0.0: \
-std_msgs.msg.ColorRGBA.__oldinit__(self, r = float(r), g = float(g), b = float(b), a = float(a))
+    std_msgs.msg.ColorRGBA.__oldinit__(self, r = float(r), g = float(g), b = float(b), a = float(a))
 std_msgs.msg.Header.__oldinit__ = std_msgs.msg.Header.__init__
-def seq_setter(self, value): pass
-std_msgs.msg.Header.seq = property(lambda self: 0, seq_setter)
+std_msgs.msg.Header.seq = property(lambda self: 0, lambda self: None) # seq is deprecated/nonexistent in ROS2
 std_msgs.msg.Header.__init__ = lambda self, seq = 0, stamp = builtin_interfaces.msg.Time(), frame_id = "": \
     std_msgs.msg.Header.__oldinit__(self, stamp = stamp, frame_id = frame_id)
 
