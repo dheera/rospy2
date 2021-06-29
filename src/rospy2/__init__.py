@@ -53,7 +53,7 @@ def init_node(node_name, anonymous=False, log_level=INFO, disable_signals=False)
 
     ros2_log_level = {
         DEBUG: rclpy.logging.LoggingSeverity.DEBUG,
-        INFO: rclpy.logging.LoggingSeverity.DEBUG,
+        INFO: rclpy.logging.LoggingSeverity.INFO,
         WARN: rclpy.logging.LoggingSeverity.WARN,
         ERROR: rclpy.logging.LoggingSeverity.ERROR,
         FATAL: rclpy.logging.LoggingSeverity.FATAL,
