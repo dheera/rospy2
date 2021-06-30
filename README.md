@@ -67,7 +67,7 @@ source /opt/ros/foxy/setup.bash
 
 * `seq` is not supported in ROS2 headers. rospy2 adds this back as a property, but it will always return 0. `seq` is deprecated even in ROS1 though I believe (?), so AFAIK you shouldn't be using it.
 
-* Some message types changed slightly between ROS1 and ROS2. For example rosgraph_msgs/Log is now rcl_interfaces/Log and there is no longer a "topics" subfield.
+* Some message types changed slightly between ROS1 and ROS2. For example rosgraph_msgs/Log is now rcl_interfaces/Log and there is no longer a "topics" subfield. rospy2 aliases rosgraph_msgs/Log to rcl_interfaces/Log so it should still work as long as you aren't using `.topics`.
 
 * There is no "parameter server" in ROS2, so ROS1 nodes that expect global parameters aren't going to work. Future functionality may allow rospy2 to fetch parameters from other nodes, but not from a global namespace.
 
