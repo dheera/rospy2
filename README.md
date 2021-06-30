@@ -63,11 +63,18 @@ source /opt/ros/foxy/setup.bash
 
 * Service calls (supported but not tested)
 
-## Known issues
+## Caveats
 
-* Some *message* types changed between ROS1 and ROS2. For example rosgraph_msgs/Log is now rcl_interfaces/Log and the message definition is slightly different.
+* `seq` is not supported in ROS2 headers. rospy2 adds this back as a property, but it will always return 0. `seq` is deprecated even in ROS1 though I believe (?), so AFAIK you shouldn't be using it.
 
-* There is no "parameter server" in ROS2, so ROS1 nodes that expect global parameters aren't going to work.
+* Some message types changed slightly between ROS1 and ROS2. For example rosgraph_msgs/Log is now rcl_interfaces/Log and there is no longer a "topics" subfield.
 
-* Since your callbacks will receive actual ROS2 messages, those messages that have numeric array fields (e.g. std_msgs/Int32MultiArray or sensor_msgs/Image)  will see those data fields as an array.array or numpy.ndarray instead of a Python list. This may trip up some code that expects a Python list. If your ROS1 code only accesses the data by index or constructs a numpy array as its first thing it does, it should theoretically not be an issue.
+* There is no "parameter server" in ROS2, so ROS1 nodes that expect global parameters aren't going to work. Future functionality may allow rospy2 to fetch parameters from other nodes, but not from a global namespace.
+
+* Since your callbacks will receive actual ROS2 messages, those messages that have numeric array fields (e.g. std_msgs/Int32MultiArray or sensor_msgs/Image)  will see those data fields as an array.array or numpy.ndarray instead of a Python list. This may trip up some code that expects a Python list. If your ROS1 code only accesses the data by index or constructs a numpy array as its first thing it does, it should theoretically not be an issue. If it *is* an issue, you can enable an experimental parameter that allows conversion to Python lists, ROS1 style:
+```
+    import rospy2 as rospy
+    rospy.ARRAY_TO_LIST = True
+```
+
 

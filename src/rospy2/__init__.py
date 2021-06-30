@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import hashlib
+import importlib
 import os
 import random
 import rclpy
@@ -13,6 +14,11 @@ import types
 import threading
 from .constants import *
 import builtin_interfaces.msg
+
+numpy = None # may be imported later
+array = None # may be imported later
+
+ARRAY_TO_LIST = False
 
 rclpy.init(args = sys.argv)
 
@@ -213,6 +219,17 @@ class Subscriber(object):
         _node.destroy_subscription(self._sub)
 
     def _ros2_callback(self, msg):
+        global numpy, array, ARRAY_TO_LIST
+        if ARRAY_TO_LIST:
+            if numpy is None:
+                numpy = importlib.import_module("numpy")
+            if array is None:
+                array = importlib.import_module("array")
+            for field_name in msg.get_fields_and_field_types():
+                value = getattr(msg, field_name)
+                if type(value) in (array.array, numpy.ndarray):
+                    setattr(msg, "_" + field_name, value.tolist())
+
         self.callback(msg, *self.callback_args)
 
     @property
