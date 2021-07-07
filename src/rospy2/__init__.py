@@ -15,6 +15,8 @@ import threading
 from .constants import *
 import builtin_interfaces.msg
 
+__version__ = "1.0.1"
+
 numpy = None # may be imported later
 array = None # may be imported later
 
@@ -135,6 +137,9 @@ def spin():
     global _thread_spin
     _thread_spin.join()
 
+def get_published_topics(namespace = '/'):
+    return [[el[0], el[1][0]] for el in _node.get_topic_names_and_types()]
+
 def get_caller_id():
     import inspect # import here since this function is highly unlikely to be used
     logwarn_once("get_caller_id() not supported in ROS2. taking a guess by selecting the first publisher. highly recommended to not do this!")
@@ -212,6 +217,7 @@ class Subscriber(object):
         self.callback = callback
         self.callback_args = callback_args
         self._sub = _node.create_subscription(topic_type, topic_name, self._ros2_callback, 10, event_callbacks = rclpy.qos_event.SubscriptionEventCallbacks())
+        _node.guards
         self.get_num_connections = lambda: 1 # No good ROS2 equivalent
 
     def __del__(self):
@@ -229,7 +235,6 @@ class Subscriber(object):
                 value = getattr(msg, field_name)
                 if type(value) in (array.array, numpy.ndarray):
                     setattr(msg, "_" + field_name, value.tolist())
-
         self.callback(msg, *self.callback_args)
 
     @property
