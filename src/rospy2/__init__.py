@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+# rospy2
+# Copyright (c) 2021, Dheera Venkatraman (https://dheera.net/)
+# https://github.com/dheera/rospy2
+# BSD 3-Clause License
+
 import hashlib
 import importlib
 import os
@@ -15,7 +20,7 @@ import threading
 from .constants import *
 import builtin_interfaces.msg
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 __name__ = "rospy2"
 
 numpy = None # may be imported later
@@ -208,7 +213,7 @@ class Publisher(object):
         _node.destroy_publisher(self._pub)
 
 class Subscriber(object):
-    def __init__(self, topic_name, topic_type, callback, callback_args = ()):
+    def __init__(self, topic_name, topic_type, callback, callback_args = None):
         global _node
         self.reg_type = "sub"
         self.data_class = topic_type
@@ -236,7 +241,10 @@ class Subscriber(object):
                 value = getattr(msg, field_name)
                 if type(value) in (array.array, numpy.ndarray):
                     setattr(msg, "_" + field_name, value.tolist())
-        self.callback(msg, *self.callback_args)
+        if self.callback_args:
+            self.callback(msg, self.callback_args)
+        else:
+            self.callback(msg)
 
     @property
     def md5sum(self): # No good ROS2 equivalent, fake it reasonably
