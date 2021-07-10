@@ -20,7 +20,7 @@ import threading
 from .constants import *
 import builtin_interfaces.msg
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 __name__ = "rospy2"
 
 numpy = None # may be imported later
@@ -440,6 +440,15 @@ try:
     import rosgraph_msgs.msg
     import rcl_interfaces.msg
     rosgraph_msgs.msg.Log = rcl_interfaces.msg.Log
+except:
+    pass
+
+try:
+    import tf2_ros
+    tf2_ros.static_transform_broadcaster.StaticTransformBroadcaster.__oldinit__ = \
+        tf2_ros.static_transform_broadcaster.StaticTransformBroadcaster.__init__
+    tf2_ros.static_transform_broadcaster.StaticTransformBroadcaster.__init__ = \
+        lambda self: tf2_ros.static_transform_broadcaster.StaticTransformBroadcaster.__oldinit__(self, _node)
 except:
     pass
 
