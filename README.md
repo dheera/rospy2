@@ -25,9 +25,9 @@ You can even make nodes that work in both ROS1 and ROS2:
 ```
 import os
 if os.environ.get("ROS_VERSION") == "1":
-    import rospy # ROS1
+    import rospy
 elif os.environ.get("ROS_VERSION") == "2":
-    import rospy2 as rospy # ROS2
+    import rospy2 as rospy
 ```
 
 You should then be able to just run your node and it should work on ROS2. A test node that works in either ROS1 or ROS2 is provided:
