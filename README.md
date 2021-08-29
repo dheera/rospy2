@@ -4,7 +4,7 @@ Many people are still using ROS1 because it takes time to rewrite all your nodes
 
 There is a [ROS1-ROS2 bridge](https://github.com/ros2/ros1_bridge) but it unfortunately requires installing both ROS1 and ROS2 at the same time.
 
-This provides a radically different solution: A Python library that masquerades as `rospy` but secretly speaks ROS2 behind the curtain. Your ROS1 code can work directly on the ROS2 network, as long as you aren't doing any crazy things. (I'm also working on a [https://github.com/dheera/roscpp2](C++\ analogue) but it's going to be slower to implement, obviously.)
+This provides a radically different solution: A Python library that masquerades as `rospy` but secretly speaks ROS2 behind the curtain. Your ROS1 code can work directly on the ROS2 network, as long as you aren't doing any crazy things. (I'm also working on a [C++ analogue](https://github.com/dheera/roscpp2) but it's going to be slower to implement, obviously.)
 
 All you need to do is install this package to your system:
 ```
