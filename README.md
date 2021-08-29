@@ -68,9 +68,9 @@ source /opt/ros/foxy/setup.bash
 
 * `seq` is not supported in ROS2 headers. rospy2 adds this back as a property, but it will always return 0. `seq` is deprecated even in ROS1 though I believe (?), so AFAIK you shouldn't be using it.
 
-* Some message types changed slightly between ROS1 and ROS2. For example rosgraph_msgs/Log is now rcl_interfaces/Log and there is no longer a "topics" subfield. rospy2 aliases rosgraph_msgs/Log to rcl_interfaces/Log so it should still work as long as you aren't using `.topics`.
+* This library will alias ROS1's `rosgraph_msgs/Log` in ROS2's `rcl_interfaces/Log` so it should work seamlessly. However (a) ROS2 no longer a "topics" subfield, so you will get an error if you try to use it, and (b) The aggregation topic `/rosout_agg` does not exist by default in ROS2.
 
-* There is no "parameter server" in ROS2, so ROS1 nodes that expect global parameters aren't going to work. Future functionality may allow rospy2 to fetch parameters from other nodes, but not from a global namespace.
+* There is no "parameter server" in ROS2, so ROS1 nodes that expect global parameters aren't going to work. Future functionality may allow rospy2 to fetch parameters from other nodes, but it will not possible to have parameters in a global namespace due to ROS2's design.
 
 * Since your callbacks will receive actual ROS2 messages, those messages that have numeric array fields (e.g. std_msgs/Int32MultiArray or sensor_msgs/Image)  will see those data fields as an array.array or numpy.ndarray instead of a Python list. This may trip up some code that expects a Python list. If your ROS1 code only accesses the data by index or constructs a numpy array as its first thing it does, it should theoretically not be an issue. If it *is* an issue, you can enable an experimental parameter that allows conversion to Python lists, ROS1 style:
 ```
