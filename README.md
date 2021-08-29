@@ -23,10 +23,10 @@ import rospy2 as rospy
 
 You can even make nodes that work in both ROS1 and ROS2:
 ```
-try:
-    import rospy
-except ImportError:
-    import rospy2 as rospy
+if os.environ.get("ROS_VERSION") == "1":
+    import rospy # ROS1
+elif os.environ.get("ROS_VERSION") == "2":
+    import rosboard.rospy2 as rospy # ROS2
 ```
 
 You should then be able to just run your node and it should work on ROS2. A test node that works in either ROS1 or ROS2 is provided:
