@@ -291,11 +291,11 @@ class Duration(object):
 
     @classmethod
     def from_sec(cls, secs):
-        return rclpy.duration.Duration(nanosecods = secs * 1000000000)
+        return rclpy.duration.Duration(nanoseconds = secs * 1000000000)
 
     @classmethod
     def from_seconds(cls, secs):
-        return rclpy.duration.Duration(nanosecods = secs * 1000000000)
+        return rclpy.duration.Duration(nanoseconds = secs * 1000000000)
 
 class Time(object):
     def __new__(cls, secs = 0, nsecs = 0):
