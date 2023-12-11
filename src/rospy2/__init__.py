@@ -181,17 +181,22 @@ def wait_for_service(service_name):
         time.sleep(0.5)
 
 class Publisher(object):
-    def __init__(self, topic_name, topic_type, queue_size = 1):
+    def __init__(self, topic_name, topic_type, queue_size=1, latch=False):
         global _node
         self.reg_type = "pub"
         self.data_class = topic_type
         self.name = topic_name
         self.resolved_name = topic_name
         self.type = _ros2_type_to_type_name(topic_type)
+        if latch:
+            qos = rclpy.qos.QoSProfile(depth=1, history=rclpy.qos.HistoryPolicy.KEEP_LAST, durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL)
+        else:
+            qos = rclpy.qos.QoSProfile(depth=1, history=rclpy.qos.HistoryPolicy.KEEP_LAST)
+
         self._pub = _node.create_publisher(
             topic_type,
             topic_name,
-            rclpy.qos.QoSProfile(depth = queue_size, history = rclpy.qos.HistoryPolicy.KEEP_LAST)
+            qos,
         )
         self.get_num_connections = self._pub.get_subscription_count
 
@@ -271,7 +276,7 @@ class ServiceProxy(object):
     def __del__(self):
         global _node
         _node.destroy_client(self._client)
-    
+
     def __call__(self, req):
         global _node
         resp = self._client.call_async(req)
