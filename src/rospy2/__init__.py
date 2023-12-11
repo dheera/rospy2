@@ -334,8 +334,10 @@ class Timer(object):
         global _node
         self.callback = callback
         if type(timer_period) is rclpy.duration.Duration:
-            timer_period = timer_period.nanoseconds / 1e9
-        self._timer = _node.create_timer(timer_period, self._ros2_callback)
+            period_sec = timer_period.nanoseconds / 1e9
+        else:
+            period_sec = timer_period
+        self._timer = _node.create_timer(period_sec, self._ros2_callback)
 
     def __del__(self):
         global _node
