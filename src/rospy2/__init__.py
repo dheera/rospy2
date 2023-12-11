@@ -12,7 +12,7 @@ import random
 import rclpy
 import rclpy.logging
 import rclpy.qos
-import rclpy.qos_event
+import rclpy.event_handler
 import sys
 import time
 import types
