@@ -271,7 +271,7 @@ class ServiceProxy(object):
     def __del__(self):
         global _node
         _node.destroy_client(self._client)
-    
+
     def __call__(self, req):
         global _node
         resp = self._client.call_async(req)
@@ -333,6 +333,8 @@ class Timer(object):
     def __init__(self, timer_period, callback):
         global _node
         self.callback = callback
+        if type(timer_period) is rclpy.duration.Duration:
+            timer_period = timer_period.nanoseconds / 1e9
         self._timer = _node.create_timer(timer_period, self._ros2_callback)
 
     def __del__(self):
