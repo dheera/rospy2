@@ -5,7 +5,7 @@
 
   <description>A ROS1-like interface for ROS2</description>
 
-  <maintainer>Dheera</maintainer>
+  <maintainer email="dheera@dheera.net">Dheera</maintainer>
   <license>BSD-3</license>
 
 </package>
